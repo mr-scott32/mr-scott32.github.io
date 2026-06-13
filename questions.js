@@ -290,8 +290,8 @@ student1 = Student("Alice Brown", "12345")
     },
     {
         title: "Validate Book ID (3 marks)",
-    marks: 3,
-    description: `A school library assigns book IDs using the following rules:
+        marks: 3,
+        description: `A school library assigns book IDs using the following rules:
 
 - Exactly 6 characters long
 - Starts with a letter
@@ -303,11 +303,11 @@ B67890 → valid
 123456 → invalid
 
 Write a Python function called validateBookID() that checks whether a book ID is valid.`,
-    starterCode: `def validateBookID(bookID):
+        starterCode: `def validateBookID(bookID):
     pass
 `,
-    keywords: ["function", "parameters", "return", "selection", "string_processing", "string_indexing", "string_methods", "comparison_operators", "boolean_logic", "len"]
-},
+        keywords: ["def", "function", "len", "string", "isalpha", "isdigit", "if", "return"]
+    },
 
 {
     title: "Temporary Access Code (3 marks)",
@@ -329,7 +329,7 @@ Write a Python program that asks the user for their username and access code, th
     starterCode: `username = input("Enter username: ")
 accessCode = input("Enter access code: ")
 `,
-    keywords: ["input", "variables", "string_processing", "string_slicing", "concatenation", "selection", "comparison_operators", "output", "print"]
+    keywords: ["input", "string", "slicing", "if", "else", "print", "=="]
 },
 {
     title: "Cinema Seat Bookings (4 marks)",
@@ -349,7 +349,7 @@ Write a Python program that:
 3. Displays the total number of available seats.`,
     starterCode: `seats = ["X"," ","X"," "," ","X"," "," ","X"," "]
 `,
-    keywords: ["lists", "list_access", "iteration", "for_loop", "selection", "counter", "variables", "comparison_operators", "output", "print", "len"]
+    keywords: ["list", "for", "loop", "if", "count", "print", "len"]
 },
 {
     title: "Fitness Tracker Steps (4 marks)",
@@ -365,7 +365,7 @@ Write a Python program that:
 - Displays the final count.`,
     starterCode: `steps = [8500, 12000, 7600, 15000, 9800, 11000, 6000]
 `,
-    keywords: ["lists", "list_access", "iteration", "for_loop", "selection", "counter", "comparison_operators", "variables", "output", "print"]
+    keywords: ["list", "for", "loop", "if", "count", "print", ">="]
 },
 {
     title: "Warehouse Product Grid (5 marks)",
@@ -390,7 +390,7 @@ Write a Python program to generate and display the warehouse layout.`,
 
 # Write your solution here
 `,
-    keywords: ["lists", "nested_iteration", "for_loop", "while_loop", "selection", "random_module", "random_numbers", "uniqueness_check", "membership_operator", "comparison_operators", "formatted_output", "variables"]
+    keywords: ["random", "list", "for", "while", "nested", "loop", "if", "in", "print"]
 },
 {
     title: "Bonus Coins Game (5 marks)",
@@ -408,7 +408,7 @@ Write a Python program that:
 - Displays the final total.`,
     starterCode: `coins = [10, 15, 20, 5, 10, 25, 15, 10]
 `,
-    keywords: ["lists", "list_access", "iteration", "for_loop", "selection", "accumulator", "comparison_operators", "variables", "arithmetic", "output", "print"]
+    keywords: ["list", "for", "loop", "if", "sum", "total", "print", ">"]
 },
 {
     title: "Student Grade Report (6 marks)",
@@ -431,7 +431,7 @@ Write a Python program that:
 - Calculates and displays the average mark.`,
     starterCode: `marks = [65, 82, 91, 77, 58, 95, 73, 88]
 `,
-    keywords: ["lists", "list_access", "iteration", "for_loop", "selection", "multiple_selection", "counter", "accumulator", "arithmetic", "comparison_operators", "variables", "output", "print", "average_calculation", "len"]
+    keywords: ["list", "for", "loop", "if", "elif", "count", "sum", "len", "average", "print"]
 },
 {
     title: "Store Discount Calculator (6 marks)",
@@ -449,7 +449,7 @@ Write a Python program that:
 - Calculates and displays the final total cost after discounts.`,
     starterCode: `prices = [15, 22, 8, 45, 30, 12]
 `,
-    keywords: ["lists", "list_access", "iteration", "for_loop", "selection", "arithmetic", "percentage_calculation", "accumulator", "comparison_operators", "variables", "output", "print"]
+    keywords: ["list", "for", "loop", "if", "calculation", "total", "print", "*", ">"]
 },
 {
     title: "Highest Scoring Student (6 marks)",
@@ -467,7 +467,7 @@ Write a Python program that:
     starterCode: `names = ["Ali", "Sarah", "Ben", "Mia"]
 marks = [78, 92, 65, 88]
 `,
-    keywords: ["lists", "parallel_lists", "list_access", "iteration", "for_loop", "selection", "maximum_tracking", "accumulator", "arithmetic", "comparison_operators", "variables", "output", "print", "average_calculation", "len"]
+    keywords: ["list", "for", "loop", "range", "len", "max", "sum", "average", "print"]
 },
 {
     title: "Parking Station Analysis (6 marks)",
@@ -486,7 +486,7 @@ Write a Python program that:
 - Displays the total number of cars for the day.`,
     starterCode: `cars = [12, 18, 25, 30, 16, 22, 28, 15]
 `,
-    keywords: ["lists", "list_access", "iteration", "for_loop", "selection", "counter", "accumulator", "comparison_operators", "variables", "arithmetic", "output", "print"]
+    keywords: ["list", "for", "loop", "if", "count", "sum", "print", ">"]
 }
 ];
 
