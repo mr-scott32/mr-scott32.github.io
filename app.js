@@ -96,10 +96,15 @@ async function submitCode() {
     feedbackContent.textContent = 'Analyzing your code...';
     feedbackSection.classList.add('show');
     
-    // Analyze the code using question-specific rubric
-    const result = await analyzeCodeByRubric(code, currentQuestion);
-    
-    feedbackContent.textContent = result.feedback.join('\n');
+    try {
+        // Analyze the code using question-specific rubric
+        const result = await analyzeCodeByRubric(code, currentQuestion);
+        
+        feedbackContent.textContent = result.feedback.join('\n');
+    } catch (error) {
+        console.error('Error in submitCode:', error);
+        feedbackContent.textContent = '❌ Error analyzing code: ' + error.message + '\n\nPlease check the browser console for details.';
+    }
 }
 
 /**
@@ -113,7 +118,7 @@ async function analyzeCodeByRubric(code, question) {
     let criteriaMet = 0;
     
     // Question-specific rubric checks
-    const rubricChecks = getRubricChecks(question.title);
+    const rubricChecks = getRubricChecks(question.title, question);
     
     // Execute rubric checks
     let codeRuns = false;
@@ -207,7 +212,7 @@ sys.stderr = StringIO()
 /**
  * Get rubric-specific checks for each question type
  */
-function getRubricChecks(questionTitle) {
+function getRubricChecks(questionTitle, question) {
     const checks = [];
     
     if (questionTitle.includes("Diamond Grid")) {
@@ -334,16 +339,21 @@ function getRubricChecks(questionTitle) {
             feedback: "Code runs without syntax errors",
             missingFeedback: "Code contains syntax errors"
         });
-        checks.push({
-            test: (code) => {
-                const keywordCount = question.keywords.filter(kw => 
-                    code.toLowerCase().includes(kw.toLowerCase())
-                ).length;
-                return keywordCount >= question.keywords.length * 0.6;
-            },
-            feedback: "Uses appropriate Python concepts for this question",
-            missingFeedback: "Missing key Python concepts: " + question.keywords.join(', ')
-        });
+        
+        // Check keywords if they exist
+        if (question.keywords && question.keywords.length > 0) {
+            checks.push({
+                test: (code) => {
+                    const keywordCount = question.keywords.filter(kw => 
+                        code.toLowerCase().includes(kw.toLowerCase())
+                    ).length;
+                    return keywordCount >= question.keywords.length * 0.6;
+                },
+                feedback: "Uses appropriate Python concepts for this question",
+                missingFeedback: "Missing key Python concepts: " + question.keywords.join(', ')
+            });
+        }
+        
         checks.push({
             test: (code, runs, output) => runs && output && output.length > 10,
             feedback: "Produces meaningful output",
