@@ -288,10 +288,8 @@ student1 = Student("Alice Brown", "12345")
 `,
         keywords: ["class", "self", "method", "list", "average", "def"]
     },
-
-
     {
-    title: "Validate Book ID (3 marks)",
+        title: "Validate Book ID (3 marks)",
     marks: 3,
     description: `A school library assigns book IDs using the following rules:
 
