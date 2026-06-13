@@ -79,7 +79,7 @@ sys.stderr = StringIO()
 }
 
 /**
- * Submit code for automated feedback with scoring
+ * Submit code for automated feedback with scoring based on HSC rubrics
  */
 async function submitCode() {
     const code = document.getElementById('code-editor').value;
@@ -96,61 +96,30 @@ async function submitCode() {
     feedbackContent.textContent = 'Analyzing your code...';
     feedbackSection.classList.add('show');
     
-    // Analyze the code and calculate score
+    // Analyze the code using question-specific rubric
+    const result = await analyzeCodeByRubric(code, currentQuestion);
+    
+    feedbackContent.textContent = result.feedback.join('\n');
+}
+
+/**
+ * Analyze code based on question-specific rubric criteria
+ */
+async function analyzeCodeByRubric(code, question) {
     let feedback = [];
     let score = 0;
-    const maxMarks = currentQuestion.marks;
+    const maxMarks = question.marks;
+    let criteriaCount = 0;
+    let criteriaMet = 0;
     
-    // Check for keywords based on question type
-    const usedKeywords = currentQuestion.keywords.filter(kw => 
-        code.toLowerCase().includes(kw.toLowerCase())
-    );
+    // Question-specific rubric checks
+    const rubricChecks = getRubricChecks(question.title);
     
-    // Score based on keyword usage (40% of marks)
-    const keywordScore = (usedKeywords.length / currentQuestion.keywords.length) * (maxMarks * 0.4);
-    score += keywordScore;
+    // Execute rubric checks
+    let codeRuns = false;
+    let hasOutput = false;
+    let output = '';
     
-    if (usedKeywords.length === 0) {
-        feedback.push("📌 You might want to consider using some of these concepts: " + 
-            currentQuestion.keywords.join(', '));
-    } else if (usedKeywords.length < currentQuestion.keywords.length / 2) {
-        feedback.push("👍 Good start! You're using some relevant concepts.");
-        feedback.push("💡 Consider exploring: " + 
-            currentQuestion.keywords.filter(kw => !usedKeywords.includes(kw)).join(', '));
-    } else {
-        feedback.push("🌟 Excellent! You're using most of the key concepts for this question.");
-        score += maxMarks * 0.1; // Bonus for comprehensive approach
-    }
-    
-    // Check code quality indicators
-    const lines = code.split('\n').filter(line => line.trim() && !line.trim().startsWith('#'));
-    
-    if (lines.length < 3) {
-        feedback.push("\n📝 Your solution seems quite short. Make sure you've addressed all parts of the question.");
-    } else {
-        score += maxMarks * 0.1; // 10% for reasonable code length
-    }
-    
-    // Check for common good practices (10% of marks)
-    const goodPractices = [];
-    if (code.includes('#') || code.includes('"""')) {
-        goodPractices.push("Nice comments!");
-        score += maxMarks * 0.05;
-    }
-    if (code.includes('def ')) {
-        goodPractices.push("Good use of functions!");
-        score += maxMarks * 0.05;
-    }
-    if (code.includes('try:') || code.includes('except')) {
-        goodPractices.push("Great error handling!");
-        score += maxMarks * 0.05;
-    }
-    
-    if (goodPractices.length > 0) {
-        feedback.push("\n✨ " + goodPractices.join(' '));
-    }
-    
-    // Try to run the code and check for errors (40% of marks)
     try {
         // Reset stdout/stderr
         pyodide.runPython(`
@@ -160,46 +129,229 @@ sys.stdout = StringIO()
 sys.stderr = StringIO()
 `);
         await pyodide.runPythonAsync(code);
-        const stdout = pyodide.runPython('sys.stdout.getvalue()');
-        
-        score += maxMarks * 0.3; // 30% for running without errors
-        
-        if (stdout && stdout.length > 10) {
-            score += maxMarks * 0.1; // 10% for producing meaningful output
-            feedback.push("\n✓ Your code runs without errors and produces output - excellent work!");
-        } else {
-            feedback.push("\n✓ Your code runs without syntax errors - that's a great foundation!");
-            feedback.push("💡 Make sure your code produces the expected output.");
-        }
+        output = pyodide.runPython('sys.stdout.getvalue()');
+        codeRuns = true;
+        hasOutput = output && output.trim().length > 0;
     } catch (error) {
-        feedback.push("\n⚠ There's a syntax error in your code. Try running it to see the specific error message, then work on fixing it. Don't worry - debugging is an essential skill!");
+        feedback.push("⚠️  Syntax/Runtime Error: Your code has errors that prevent it from running.");
+        feedback.push("   Try running the code to see the specific error and fix it first.");
+        feedback.push("");
     }
     
-    // Cap score at maximum marks
-    score = Math.min(Math.round(score * 10) / 10, maxMarks);
+    // Analyze based on rubric
+    for (const check of rubricChecks) {
+        criteriaCount++;
+        if (check.test(code, codeRuns, output)) {
+            criteriaMet++;
+            if (check.feedback) {
+                feedback.push("✓ " + check.feedback);
+            }
+        } else {
+            if (check.missingFeedback) {
+                feedback.push("✗ " + check.missingFeedback);
+            }
+        }
+    }
     
-    // Determine performance level
+    // Calculate score based on criteria met
+    const criteriaRatio = criteriaCount > 0 ? criteriaMet / criteriaCount : 0;
+    
+    // Map criteria met to HSC rubric levels
+    if (criteriaRatio >= 0.95 && codeRuns && hasOutput) {
+        // Full marks - all requirements met
+        score = maxMarks;
+    } else if (criteriaRatio >= 0.75 && codeRuns) {
+        // Substantial - most requirements met
+        score = maxMarks === 6 ? 5 : maxMarks === 5 ? 4 : maxMarks === 4 ? 3 : 2;
+    } else if (criteriaRatio >= 0.5) {
+        // Some requirements met
+        score = maxMarks === 6 ? 3.5 : maxMarks === 5 ? 3 : maxMarks === 4 ? 2 : maxMarks === 3 ? 2 : 1.5;
+    } else if (criteriaRatio >= 0.25) {
+        // One or few requirements met
+        score = maxMarks === 6 ? 2 : maxMarks >= 4 ? 2 : 1;
+    } else {
+        // Shows some understanding
+        score = 1;
+    }
+    
+    // Round score
+    score = Math.round(score * 2) / 2; // Round to nearest 0.5
+    
+    // Add summary
+    feedback.push("");
+    feedback.push("=".repeat(50));
+    feedback.push(`📊 Criteria Met: ${criteriaMet}/${criteriaCount}`);
+    
     const percentage = (score / maxMarks) * 100;
     let performanceMsg = "";
     
-    if (percentage >= 85) {
-        performanceMsg = "🏆 Outstanding work!";
+    if (percentage >= 90) {
+        performanceMsg = "🏆 Outstanding! Your solution addresses all requirements.";
     } else if (percentage >= 70) {
-        performanceMsg = "🎯 Great effort!";
+        performanceMsg = "🎯 Great work! You've met most of the requirements.";
     } else if (percentage >= 50) {
-        performanceMsg = "👍 Good progress!";
+        performanceMsg = "👍 Good progress! Keep working on the remaining requirements.";
     } else {
-        performanceMsg = "💪 Keep practicing!";
+        performanceMsg = "💪 Keep practicing! Review the question requirements carefully.";
     }
     
-    feedback.push("\n🎯 Keep practicing! Try running your code to see if the output matches the expected results.");
-    feedback.push("\n💭 Remember: In the HSC, markers look for correct logic, appropriate use of Python features, and clear code structure.");
-    feedback.push("\n" + "=".repeat(50));
-    feedback.push("\n" + performanceMsg);
-    feedback.push(`📊 ESTIMATED MARK: ${score}/${maxMarks} (${percentage.toFixed(0)}%)`);
-    feedback.push("\n⚠️  Note: This is an automated estimate. Actual HSC marking considers correctness of logic, output accuracy, and code efficiency.");
+    feedback.push(performanceMsg);
+    feedback.push(`📝 ESTIMATED MARK: ${score}/${maxMarks} (${percentage.toFixed(0)}%)`);
+    feedback.push("");
+    feedback.push("⚠️  Note: This is an automated estimate based on HSC rubric criteria.");
+    feedback.push("   Actual marking considers correctness of logic, output accuracy, and code quality.");
     
-    feedbackContent.textContent = feedback.join('\n');
+    return { feedback, score };
+}
+
+/**
+ * Get rubric-specific checks for each question type
+ */
+function getRubricChecks(questionTitle) {
+    const checks = [];
+    
+    if (questionTitle.includes("Diamond Grid")) {
+        // 5 marks - Example 1 rubric
+        checks.push({
+            test: (code) => /import\s+random/.test(code) && /random\.(randint|randrange|sample|choice)/.test(code),
+            feedback: "Uses random number generation appropriately",
+            missingFeedback: "Missing or incorrect use of random number generation"
+        });
+        checks.push({
+            test: (code) => /\b(list|List|\[|\])/.test(code) && /(append|\.add|\+=)/.test(code),
+            feedback: "Creates and manages a list to track diamond positions",
+            missingFeedback: "Should create a list to store unique diamond positions"
+        });
+        checks.push({
+            test: (code) => /while/.test(code) || (/for/.test(code) && code.split('for').length >= 2),
+            feedback: "Uses appropriate looping structures",
+            missingFeedback: "Needs proper loops to generate positions and display grid"
+        });
+        checks.push({
+            test: (code) => /if/.test(code) && /in\s/.test(code),
+            feedback: "Uses selection structures to check conditions",
+            missingFeedback: "Should use if statements to check for duplicates or positions"
+        });
+        checks.push({
+            test: (code, runs, output) => runs && output && /\|/.test(output) && output.split('\n').length >= 5,
+            feedback: "Produces correctly formatted grid output",
+            missingFeedback: "Output should be a 5×5 grid with proper formatting"
+        });
+        
+    } else if (questionTitle.includes("Game Scoring")) {
+        // 6 marks - Example 2 rubric
+        checks.push({
+            test: (code) => /for\s+\w+\s+in/.test(code),
+            feedback: "Loops through the scores list correctly",
+            missingFeedback: "Should loop through the scores list"
+        });
+        checks.push({
+            test: (code) => /scores\[/.test(code) && /\[i/.test(code),
+            feedback: "Accesses list elements correctly using indices",
+            missingFeedback: "Should access list elements using proper indexing"
+        });
+        checks.push({
+            test: (code, runs, output) => runs && output && /Round.*Score.*Points/i.test(output),
+            feedback: "Displays scores and points in proper format",
+            missingFeedback: "Should display Round, Score, and Points in a formatted table"
+        });
+        checks.push({
+            test: (code) => /total|sum/i.test(code) && /\+=/.test(code),
+            feedback: "Calculates total points correctly",
+            missingFeedback: "Should calculate and display total points"
+        });
+        checks.push({
+            test: (code) => /if.*==\s*5/.test(code) && /\[i\s*\+\s*1\]/.test(code),
+            feedback: "Implements bonus points logic correctly",
+            missingFeedback: "Should add next round's score as bonus when player scores 5"
+        });
+        checks.push({
+            test: (code) => /(i\s*==\s*9|i\s*==\s*len.*-\s*1|i\s*!=\s*9)/.test(code),
+            feedback: "Handles the final round bonus correctly",
+            missingFeedback: "Should handle last round differently (10 points if score is 5)"
+        });
+        
+    } else if (questionTitle.includes("Username Validation")) {
+        // 3 marks - Example 3 rubric
+        checks.push({
+            test: (code) => /def\s+\w+\s*\(.*username.*\)/i.test(code),
+            feedback: "Defines a function that accepts a username parameter",
+            missingFeedback: "Should define a function with a username parameter"
+        });
+        checks.push({
+            test: (code) => /len\s*\(.*\)/.test(code) && /[<>]=?\s*8/.test(code),
+            feedback: "Checks that username length is no more than 8 characters",
+            missingFeedback: "Should check that username has no more than 8 characters"
+        });
+        checks.push({
+            test: (code) => /\.isalpha\s*\(\s*\)/.test(code),
+            feedback: "Validates that username contains only letters using isalpha()",
+            missingFeedback: "Should check that username contains only letters"
+        });
+        checks.push({
+            test: (code) => /["']<["'].*in/.test(code) || /in.*["']<["']/.test(code),
+            feedback: "Checks for the '<' character to prevent code injection",
+            missingFeedback: "Should check that '<' is not in the username"
+        });
+        checks.push({
+            test: (code) => /return\s+(True|False)/.test(code),
+            feedback: "Returns appropriate boolean values",
+            missingFeedback: "Function should return True or False based on validation"
+        });
+        
+    } else if (questionTitle.includes("Temporary Password")) {
+        // 3 marks - Example 4 rubric
+        checks.push({
+            test: (code) => /input\s*\(/.test(code) && code.split(/input\s*\(/).length >= 3,
+            feedback: "Prompts user for both username and password",
+            missingFeedback: "Should use input() to get username and password from user"
+        });
+        checks.push({
+            test: (code) => /\[:3\]|\[0:3\]|\[:\s*3\s*\]/.test(code),
+            feedback: "Extracts first 3 characters using string slicing",
+            missingFeedback: "Should use string slicing to get first 3 characters of username"
+        });
+        checks.push({
+            test: (code) => /\+\s*['"]123['"]|['"]123['"]\s*\+/.test(code),
+            feedback: "Constructs expected password by adding '123'",
+            missingFeedback: "Should create expected password by adding '123' to first 3 letters"
+        });
+        checks.push({
+            test: (code) => /if/.test(code) && /==/.test(code),
+            feedback: "Uses selection structure to compare passwords",
+            missingFeedback: "Should use if statement to compare entered password with expected"
+        });
+        checks.push({
+            test: (code) => /print\s*\(.*[Ww]elcome/.test(code) && /print\s*\(.*[Ii]ncorrect|[Ee]rror/.test(code),
+            feedback: "Provides appropriate welcome or error messages",
+            missingFeedback: "Should display welcome message or error message based on comparison"
+        });
+        
+    } else {
+        // Generic checks for other questions
+        checks.push({
+            test: (code, runs) => runs,
+            feedback: "Code runs without syntax errors",
+            missingFeedback: "Code contains syntax errors"
+        });
+        checks.push({
+            test: (code) => {
+                const keywordCount = question.keywords.filter(kw => 
+                    code.toLowerCase().includes(kw.toLowerCase())
+                ).length;
+                return keywordCount >= question.keywords.length * 0.6;
+            },
+            feedback: "Uses appropriate Python concepts for this question",
+            missingFeedback: "Missing key Python concepts: " + question.keywords.join(', ')
+        });
+        checks.push({
+            test: (code, runs, output) => runs && output && output.length > 10,
+            feedback: "Produces meaningful output",
+            missingFeedback: "Should produce appropriate output"
+        });
+    }
+    
+    return checks;
 }
 
 /**

@@ -287,5 +287,208 @@ Grade: B`,
 student1 = Student("Alice Brown", "12345")
 `,
         keywords: ["class", "self", "method", "list", "average", "def"]
-    }
+    },
+
+
+    {
+    title: "Validate Book ID (3 marks)",
+    marks: 3,
+    description: `A school library assigns book IDs using the following rules:
+
+- Exactly 6 characters long
+- Starts with a letter
+- Remaining characters must be digits
+
+Examples:
+A12345 → valid
+B67890 → valid
+123456 → invalid
+
+Write a Python function called validateBookID() that checks whether a book ID is valid.`,
+    starterCode: `def validateBookID(bookID):
+    pass
+`,
+    keywords: ["function", "parameters", "return", "selection", "string_processing", "string_indexing", "string_methods", "comparison_operators", "boolean_logic", "len"]
+},
+
+{
+    title: "Temporary Access Code (3 marks)",
+    marks: 3,
+    description: `A music streaming service creates a temporary access code by:
+
+- Taking the last three letters of a username
+- Adding "999" to the end
+
+For example:
+
+Username: MUSICIAN
+Code: IAN999
+
+Write a Python program that asks the user for their username and access code, then displays:
+
+- "Access granted" if the code is correct
+- "Access denied" otherwise`,
+    starterCode: `username = input("Enter username: ")
+accessCode = input("Enter access code: ")
+`,
+    keywords: ["input", "variables", "string_processing", "string_slicing", "concatenation", "selection", "comparison_operators", "output", "print"]
+},
+{
+    title: "Cinema Seat Bookings (4 marks)",
+    marks: 4,
+    description: `A cinema stores seat bookings in a list:
+
+seats = ["X"," ","X"," "," ","X"," "," ","X"," "]
+
+Where:
+- "X" represents a booked seat
+- " " represents an available seat
+
+Write a Python program that:
+
+1. Displays the seat number and its status.
+2. Counts the number of available seats.
+3. Displays the total number of available seats.`,
+    starterCode: `seats = ["X"," ","X"," "," ","X"," "," ","X"," "]
+`,
+    keywords: ["lists", "list_access", "iteration", "for_loop", "selection", "counter", "variables", "comparison_operators", "output", "print", "len"]
+},
+{
+    title: "Fitness Tracker Steps (4 marks)",
+    marks: 4,
+    description: `A fitness tracker records the number of steps taken each day:
+
+steps = [8500, 12000, 7600, 15000, 9800, 11000, 6000]
+
+Write a Python program that:
+
+- Displays each day's step count.
+- Counts how many days reached at least 10,000 steps.
+- Displays the final count.`,
+    starterCode: `steps = [8500, 12000, 7600, 15000, 9800, 11000, 6000]
+`,
+    keywords: ["lists", "list_access", "iteration", "for_loop", "selection", "counter", "comparison_operators", "variables", "output", "print"]
+},
+{
+    title: "Warehouse Product Grid (5 marks)",
+    marks: 5,
+    description: `A warehouse stores products in a 4 × 4 grid.
+
+The program must randomly place 8 products in the grid.
+
+The grid should then be displayed with:
+- P representing a product
+- Blank spaces representing empty locations
+
+Example:
+
+| P |   | P |   |
+|   | P |   | P |
+| P |   | P |   |
+|   | P |   | P |
+
+Write a Python program to generate and display the warehouse layout.`,
+    starterCode: `import random
+
+# Write your solution here
+`,
+    keywords: ["lists", "nested_iteration", "for_loop", "while_loop", "selection", "random_module", "random_numbers", "uniqueness_check", "membership_operator", "comparison_operators", "formatted_output", "variables"]
+},
+{
+    title: "Bonus Coins Game (5 marks)",
+    marks: 5,
+    description: `A game awards coins to a player over 8 levels.
+
+coins = [10, 15, 20, 5, 10, 25, 15, 10]
+
+If a player earns more than 20 coins in a level, they receive a bonus of 5 extra coins for that level.
+
+Write a Python program that:
+
+- Displays each level's coins and adjusted total.
+- Calculates the player's final coin total.
+- Displays the final total.`,
+    starterCode: `coins = [10, 15, 20, 5, 10, 25, 15, 10]
+`,
+    keywords: ["lists", "list_access", "iteration", "for_loop", "selection", "accumulator", "comparison_operators", "variables", "arithmetic", "output", "print"]
+},
+{
+    title: "Student Grade Report (6 marks)",
+    marks: 6,
+    description: `A school stores student test results:
+
+marks = [65, 82, 91, 77, 58, 95, 73, 88]
+
+Grades are awarded as follows:
+
+90+ = A
+80–89 = B
+70–79 = C
+Below 70 = D
+
+Write a Python program that:
+
+- Displays each student's mark and grade.
+- Counts the number of A grades.
+- Calculates and displays the average mark.`,
+    starterCode: `marks = [65, 82, 91, 77, 58, 95, 73, 88]
+`,
+    keywords: ["lists", "list_access", "iteration", "for_loop", "selection", "multiple_selection", "counter", "accumulator", "arithmetic", "comparison_operators", "variables", "output", "print", "average_calculation", "len"]
+},
+{
+    title: "Store Discount Calculator (6 marks)",
+    marks: 6,
+    description: `An online store stores product prices:
+
+prices = [15, 22, 8, 45, 30, 12]
+
+Products costing more than $20 receive a 10% discount.
+
+Write a Python program that:
+
+- Displays each original price.
+- Calculates and displays the discounted price where appropriate.
+- Calculates and displays the final total cost after discounts.`,
+    starterCode: `prices = [15, 22, 8, 45, 30, 12]
+`,
+    keywords: ["lists", "list_access", "iteration", "for_loop", "selection", "arithmetic", "percentage_calculation", "accumulator", "comparison_operators", "variables", "output", "print"]
+},
+{
+    title: "Highest Scoring Student (6 marks)",
+    marks: 6,
+    description: `A teacher stores student names and marks in two lists:
+
+names = ["Ali", "Sarah", "Ben", "Mia"]
+marks = [78, 92, 65, 88]
+
+Write a Python program that:
+
+- Displays each student's name and mark.
+- Identifies and displays the highest mark and student name.
+- Calculates and displays the class average.`,
+    starterCode: `names = ["Ali", "Sarah", "Ben", "Mia"]
+marks = [78, 92, 65, 88]
+`,
+    keywords: ["lists", "parallel_lists", "list_access", "iteration", "for_loop", "selection", "maximum_tracking", "accumulator", "arithmetic", "comparison_operators", "variables", "output", "print", "average_calculation", "len"]
+},
+{
+    title: "Parking Station Analysis (6 marks)",
+    marks: 6,
+    description: `A parking station records the number of cars entering each hour:
+
+cars = [12, 18, 25, 30, 16, 22, 28, 15]
+
+If more than 20 cars enter during an hour, that hour is considered "busy".
+
+Write a Python program that:
+
+- Displays each hour and number of cars.
+- Displays whether the hour was busy.
+- Counts the total number of busy hours.
+- Displays the total number of cars for the day.`,
+    starterCode: `cars = [12, 18, 25, 30, 16, 22, 28, 15]
+`,
+    keywords: ["lists", "list_access", "iteration", "for_loop", "selection", "counter", "accumulator", "comparison_operators", "variables", "arithmetic", "output", "print"]
+}
 ];
+
