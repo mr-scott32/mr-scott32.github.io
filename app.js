@@ -52,6 +52,17 @@ async function runCode() {
     outputDiv.textContent = 'Running...\n';
     
     try {
+        // Clear the Python environment to start fresh
+        pyodide.runPython(`
+# Clear all user-defined variables
+for var in list(globals().keys()):
+    if not var.startswith('_') and var not in ['sys', 'io', 'StringIO']:
+        try:
+            del globals()[var]
+        except:
+            pass
+`);
+        
         // Redirect stdout to capture print statements
         pyodide.runPython(`
 import sys
@@ -93,7 +104,7 @@ async function submitCode() {
         return;
     }
     
-    feedbackContent.textContent = 'Analyzing your code...';
+    feedbackContent.textContent = 'Analysing your code...';
     feedbackSection.classList.add('show');
     
     try {
@@ -126,6 +137,17 @@ async function analyzeCodeByRubric(code, question) {
     let output = '';
     
     try {
+        // Clear the Python environment to start fresh
+        pyodide.runPython(`
+# Clear all user-defined variables
+for var in list(globals().keys()):
+    if not var.startswith('_') and var not in ['sys', 'io', 'StringIO']:
+        try:
+            del globals()[var]
+        except:
+            pass
+`);
+        
         // Reset stdout/stderr
         pyodide.runPython(`
 import sys
