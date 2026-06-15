@@ -306,7 +306,7 @@ Write a Python function called validateBookID() that checks whether a book ID is
         starterCode: `def validateBookID(bookID):
     pass
 `,
-        keywords: ["def", "function", "len", "string", "isalpha", "isdigit", "if", "return"]
+        keywords: ["def", "len", "string", "isalpha", "isdigit", "if", "return"]
     },
 
 {
@@ -329,7 +329,7 @@ Write a Python program that asks the user for their username and access code, th
     starterCode: `username = input("Enter username: ")
 accessCode = input("Enter access code: ")
 `,
-    keywords: ["input", "string", "slicing", "if", "else", "print", "=="]
+    keywords: ["input", "string", "if", "else", "print", "=="]
 },
 {
     title: "Cinema Seat Bookings (4 marks)",
@@ -349,7 +349,7 @@ Write a Python program that:
 3. Displays the total number of available seats.`,
     starterCode: `seats = ["X"," ","X"," "," ","X"," "," ","X"," "]
 `,
-    keywords: ["list", "for", "loop", "if", "count", "print", "len"]
+    keywords: ["list", "for", "loop", "if", "print", "len"]
 },
 {
     title: "Fitness Tracker Steps (4 marks)",
@@ -390,7 +390,7 @@ Write a Python program to generate and display the warehouse layout.`,
 
 # Write your solution here
 `,
-    keywords: ["random", "list", "for", "while", "nested", "loop", "if", "in", "print"]
+    keywords: ["random", "list", "for", "while", "loop", "if", "in", "print"]
 },
 {
     title: "Bonus Coins Game (5 marks)",
@@ -431,7 +431,7 @@ Write a Python program that:
 - Calculates and displays the average mark.`,
     starterCode: `marks = [65, 82, 91, 77, 58, 95, 73, 88]
 `,
-    keywords: ["list", "for", "loop", "if", "elif", "count", "sum", "len", "average", "print"]
+    keywords: ["list", "for", "loop", "if", "elif", "len", "print"]
 },
 {
     title: "Store Discount Calculator (6 marks)",
@@ -449,7 +449,7 @@ Write a Python program that:
 - Calculates and displays the final total cost after discounts.`,
     starterCode: `prices = [15, 22, 8, 45, 30, 12]
 `,
-    keywords: ["list", "for", "loop", "if", "calculation", "total", "print", "*", ">"]
+    keywords: ["list", "for", "loop", "if", "total", "print", "*", ">"]
 },
 {
     title: "Highest Scoring Student (6 marks)",
@@ -467,7 +467,7 @@ Write a Python program that:
     starterCode: `names = ["Ali", "Sarah", "Ben", "Mia"]
 marks = [78, 92, 65, 88]
 `,
-    keywords: ["list", "for", "loop", "range", "len", "max", "sum", "average", "print"]
+    keywords: ["list", "for", "loop", "range", "len", "print"]
 },
 {
     title: "Parking Station Analysis (6 marks)",
@@ -486,7 +486,7 @@ Write a Python program that:
 - Displays the total number of cars for the day.`,
     starterCode: `cars = [12, 18, 25, 30, 16, 22, 28, 15]
 `,
-    keywords: ["list", "for", "loop", "if", "count", "sum", "print", ">"]
+    keywords: ["list", "for", "loop", "if", "print", ">"]
 }
 ];
 
